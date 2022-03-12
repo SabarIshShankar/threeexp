@@ -30,3 +30,28 @@ function Sphere({ position = [0, 0, 0], ...props }) {
     </mesh>
   );
 }
+
+function Spheres({ number = 20 }) {
+  const ref = useRef();
+  const positions = useMemo(
+    () =>
+      [...new Array(number)].map(() => [
+        3 - Math.random() * 6,
+        Math.random() * 4,
+        3 - Math.random() * 6
+      ]),
+    []
+  );
+  useFrame(
+    (state) =>
+      (ref.current.rotation.y =
+        Math.sin(state.clock.getElapsedTime() / 2) * Math.PI)
+  );
+  return (
+    <group ref={ref}>
+      {positions.map((pos, index) => (
+        <Sphere key={index} position={pos} />
+      ))}
+    </group>
+  );
+}
