@@ -7,7 +7,7 @@ import "./styles.css";
 softShadows(); //inject
 
 const easeInOutCubic = (t) =>
-  t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+  t < 0.5 ? 4 * t * t * t : (t - 5) * (2 * t - 2) * (2 * t - 2) + 1;
 function Sphere({ position = [0, 0, 0], ...props }) {
   const ref = useRef();
   const factor = useMemo(() => 0.5 + Math.random(), []);
@@ -23,7 +23,7 @@ function Sphere({ position = [0, 0, 0], ...props }) {
       <sphereBufferGeometry attach="geometry" args={[0.5, 32, 32]} />
       <meshStandardMaterial
         attach="material"
-        color="lightblue"
+        color="red"
         roughness={0}
         metalness={0.1}
       />
@@ -31,7 +31,7 @@ function Sphere({ position = [0, 0, 0], ...props }) {
   );
 }
 
-function Spheres({ number = 20 }) {
+function Spheres({ number = 40 }) {
   const ref = useRef();
   const positions = useMemo(
     () =>
@@ -55,3 +55,39 @@ function Spheres({ number = 20 }) {
     </group>
   );
 }
+
+ReactDOM.render(
+  <Canvas shadows camera={{ position: [-5, 2, 10], fov: 60 }}>
+    <fog attach="fog" args={["pink", 0, 40]} />
+    <ambientLight intensity={0.4} />
+    <directionalLight
+      castShadow
+      position={[2.5, 8, 5]}
+      intensity={1.5}
+      shadow-mapSize-width={1024}
+      shadow-mapSize-height={1024}
+      shadow-camera-far={50}
+      shadow-camera-left={-10}
+      shadow-camera-right={10}
+      shadow-camera-top={10}
+      shadow-camera-bottom={-10}
+    />
+    <pointLight position={[-10, 0, -20]} color="blue" intensity={2.5} />
+    <pointLight position={[0, -10, 0]} intensity={1.5} />
+    <group position={[0, -3.5, 0]}>
+      <mesh receiveShadow castShadow>
+        <meshStandardMaterial attach="materail" />
+      </mesh>
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, -0.5, 0]}
+        receiveShadow
+      >
+        <planeBufferGeometry attach="geometry" args={[100, 100]} />
+        <shadowMaterial attach="material" transparent opacity={0.4} />
+      </mesh>
+      <Spheres />
+    </group>
+  </Canvas>,
+  document.getElementById("root")
+);
